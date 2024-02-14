@@ -32,3 +32,12 @@ class Comment(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class Category(BaseModel):
+    category: str
+    description: str
+    user: str
+
+    class Config:
+        from_attributes = True
