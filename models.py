@@ -43,3 +43,13 @@ class Comments(Base):
     user = Column(String)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+class Categories(Base):
+    __tablename__ = 'categories'
+    id = Column(Integer, primary_key=True)
+    category = Column(String)
+    description = Column(String)
+    user = Column(String)
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
+    time_updated = Column(DateTime(timezone=True), onupdate=func.now())
