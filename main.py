@@ -99,10 +99,11 @@ async def category(cat: CategorySchema):
 async def get_category():
     categories = db.session.query(CategoryModel).all()
     return categories
-    # file_ext = file.filename.split(".").pop()  # Get the file extension
-    # file_name = token_hex(10)
-    # file_path = f"{file_name}.{file_ext}"
-    # with open(file_path, "wb") as f:
-    #     content = await file.read()
-    #     f.write(content)
-    # return {"success": True, "file_path": file_path, "message": "File Uploaded Successfully"}
+
+
+@app.delete("/category/{id}")
+async def delete_category(id: int):
+    category = db.session.query(CategoryModel).get(id)
+    db.session.delete(category)
+    db.session.commit()
+    return {"message": "Category Deleted"}
