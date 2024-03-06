@@ -1,4 +1,5 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Form
+from typing import Annotated
 
 from fastapi_sqlalchemy import DBSessionMiddleware, db
 import os
@@ -83,7 +84,7 @@ async def delete_comment(id: int):
 
 
 @app.post("/upload")
-async def upload_file(file: UploadFile):
+async def upload_file(file: UploadFile, name: Annotated[str, Form()]):
     return {"filename": file.filename}
 
 
