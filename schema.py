@@ -41,3 +41,14 @@ class Category(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class Upload(BaseModel):
+    name: str
+    category: str
+    description: str
+    original_file_name: str
+    user: str
+
+    class Config:
+        from_attributes = True

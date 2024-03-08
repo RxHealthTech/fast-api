@@ -53,3 +53,16 @@ class Categories(Base):
     user = Column(String)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+class Uploads(Base):
+    __tablename__ = 'uploads'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    category = Column(String)
+    description = Column(String)
+    original_file_name = Column(String)
+    original_file_content = Column(String)
+    user = Column(String)
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
+    time_updated = Column(DateTime(timezone=True), onupdate=func.now())

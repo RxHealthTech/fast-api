@@ -13,6 +13,7 @@ from schema import Category as CategorySchema
 from models import ReportFile as ModelReportFile
 from models import Comments as CommentModel
 from models import Categories as CategoryModel
+from models import Uploads as UploadFileModel
 
 # get is when you want to get data from the database (or list)
 # post is when you want to add data to the database (or create)
@@ -83,11 +84,6 @@ async def delete_comment(id: int):
     return {"message": "Comment Deleted"}
 
 
-@app.post("/upload")
-async def upload_file(file: UploadFile, name: Annotated[str, Form()]):
-    return {"filename": file.filename}
-
-
 @app.post("/category")
 async def category(cat: CategorySchema):
     db_category = CategoryModel(category=cat.category, user=cat.user, description=cat.description)
@@ -108,3 +104,15 @@ async def delete_category(id: int):
     db.session.delete(category)
     db.session.commit()
     return {"message": "Category Deleted"}
+
+
+@app.post("/upload")
+async def upload_file(file: UploadFile, name: Annotated[str, Form()], description: Annotated[str, Form()],
+                      category: Annotated[str, Form()], user: Annotated[str, Form()]):
+    contents = await file.read()
+    encoded_file = contents.decode("utf-8")
+    db_upload = UploadFileModel(name=name, description=description, category=category, original_file_name=file.filename,
+                                user=user, original_file_content=encoded_file)
+    db.session.add(db_upload)
+    db.session.commit()
+    return db_upload
