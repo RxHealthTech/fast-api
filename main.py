@@ -1,6 +1,8 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Form
+from typing import Annotated
 
 from fastapi_sqlalchemy import DBSessionMiddleware, db
+from sqlalchemy.orm import load_only
 import os
 from dotenv import load_dotenv
 
@@ -8,10 +10,12 @@ from dotenv import load_dotenv
 from schema import ReportFile as SchemaReportFile
 from schema import Comment as CommentSchema
 from schema import Category as CategorySchema
+from schema import Upload as UploadFileSchema
 # Model is what will be in the database (Or Database Shape)
 from models import ReportFile as ModelReportFile
 from models import Comments as CommentModel
 from models import Categories as CategoryModel
+from models import Uploads as UploadFileModel
 
 # get is when you want to get data from the database (or list)
 # post is when you want to add data to the database (or create)
@@ -82,11 +86,6 @@ async def delete_comment(id: int):
     return {"message": "Comment Deleted"}
 
 
-@app.post("/upload")
-async def upload_file(file: UploadFile):
-    return {"filename": file.filename}
-
-
 @app.post("/category")
 async def category(cat: CategorySchema):
     db_category = CategoryModel(category=cat.category, user=cat.user, description=cat.description)
@@ -107,3 +106,32 @@ async def delete_category(id: int):
     db.session.delete(category)
     db.session.commit()
     return {"message": "Category Deleted"}
+
+
+@app.post("/upload")
+async def upload_file(file: UploadFile, name: Annotated[str, Form()], description: Annotated[str, Form()],
+                      category: Annotated[str, Form()], user: Annotated[str, Form()]):
+    contents = await file.read()
+    encoded_file = contents.decode("utf-8")
+    db_upload = UploadFileModel(name=name, description=description, category=category, original_file_name=file.filename,
+                                user=user, original_file_content=encoded_file)
+    db.session.add(db_upload)
+    db.session.commit()
+    return db_upload
+
+
+@app.get("/upload", response_model=list[UploadFileSchema])
+async def get_uploads():
+    query = db.session.query().with_entities(UploadFileModel.id, UploadFileModel.name, UploadFileModel.category,
+                                             UploadFileModel.description, UploadFileModel.original_file_name,
+                                             UploadFileModel.user)
+    uploads = query.all()
+    return uploads
+
+
+@app.delete("/upload/{id}")
+async def delete_upload(id: int):
+    upload = db.session.query(UploadFileModel).get(id)
+    db.session.delete(upload)
+    db.session.commit()
+    return {"message": "Upload Deleted"}
