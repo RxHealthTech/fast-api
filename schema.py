@@ -44,6 +44,7 @@ class Category(BaseModel):
 
 
 class Upload(BaseModel):
+    id: int
     name: str
     category: str
     description: str

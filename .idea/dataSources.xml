@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="fast-api@ep-fancy-sky-57274979.us-east-2.aws.neon.tech" uuid="2364f6d3-fd76-41f3-9936-f01370e7a2d6">
+    <data-source source="LOCAL" name="Neon.Fast-Api" uuid="2364f6d3-fd76-41f3-9936-f01370e7a2d6">
       <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.postgresql.Driver</jdbc-driver>

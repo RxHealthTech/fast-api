@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File, Form
 from typing import Annotated
 
 from fastapi_sqlalchemy import DBSessionMiddleware, db
+from sqlalchemy.orm import load_only
 import os
 from dotenv import load_dotenv
 
@@ -9,6 +10,7 @@ from dotenv import load_dotenv
 from schema import ReportFile as SchemaReportFile
 from schema import Comment as CommentSchema
 from schema import Category as CategorySchema
+from schema import Upload as UploadFileSchema
 # Model is what will be in the database (Or Database Shape)
 from models import ReportFile as ModelReportFile
 from models import Comments as CommentModel
@@ -116,3 +118,20 @@ async def upload_file(file: UploadFile, name: Annotated[str, Form()], descriptio
     db.session.add(db_upload)
     db.session.commit()
     return db_upload
+
+
+@app.get("/upload", response_model=list[UploadFileSchema])
+async def get_uploads():
+    query = db.session.query().with_entities(UploadFileModel.id, UploadFileModel.name, UploadFileModel.category,
+                                             UploadFileModel.description, UploadFileModel.original_file_name,
+                                             UploadFileModel.user)
+    uploads = query.all()
+    return uploads
+
+
+@app.delete("/upload/{id}")
+async def delete_upload(id: int):
+    upload = db.session.query(UploadFileModel).get(id)
+    db.session.delete(upload)
+    db.session.commit()
+    return {"message": "Upload Deleted"}
