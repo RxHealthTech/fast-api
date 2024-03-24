@@ -11,11 +11,13 @@ from schema import ReportFile as SchemaReportFile
 from schema import Comment as CommentSchema
 from schema import Category as CategorySchema
 from schema import Upload as UploadFileSchema
+from schema import ForNutritionReport as ForNutritionReportSchema
 # Model is what will be in the database (Or Database Shape)
 from models import ReportFile as ModelReportFile
 from models import Comments as CommentModel
 from models import Categories as CategoryModel
 from models import Uploads as UploadFileModel
+from models import ForNutritionReport as ForNutritionReportModel
 
 # get is when you want to get data from the database (or list)
 # post is when you want to add data to the database (or create)
@@ -30,7 +32,7 @@ app.add_middleware(DBSessionMiddleware, db_url=os.environ['DATABASE_URL'])
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Api is healthy (Up and Running)"}
 
 
 @app.get("/health")
@@ -135,3 +137,19 @@ async def delete_upload(id: int):
     db.session.delete(upload)
     db.session.commit()
     return {"message": "Upload Deleted"}
+
+
+@app.get("/report/nutrition")
+async def generate_nutrition_report():
+    reports = db.session.query(ForNutritionReportModel).all()
+    return reports
+
+
+@app.post('/report/nutrition')
+async def generate_nutrition_report(report: ForNutritionReportSchema):
+    db_report = ForNutritionReportModel(name=report.name, machineParam=report.machineParam,
+                                        demographicParam=report.demographicParam, description=report.description,
+                                        user=report.user)
+    db.session.add(db_report)
+    db.session.commit()
+    return db_report

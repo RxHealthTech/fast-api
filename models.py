@@ -66,3 +66,15 @@ class Uploads(Base):
     user = Column(String)
     time_created = Column(DateTime(timezone=True), server_default=func.now())
     time_updated = Column(DateTime(timezone=True), onupdate=func.now())
+
+
+class ForNutritionReport(Base):
+    __tablename__ = 'for_nutrition_report'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    machineParam = Column(Integer)  # upload id for machine param
+    demographicParam = Column(Integer)  # upload id for demographic param
+    description = Column(String)
+    user = Column(String)
+    time_created = Column(DateTime(timezone=True), server_default=func.now())
+    time_updated = Column(DateTime(timezone=True), onupdate=func.now())

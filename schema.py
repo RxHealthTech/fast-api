@@ -53,3 +53,15 @@ class Upload(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class ForNutritionReport(BaseModel):
+    id: int
+    name: str
+    machineParam: int
+    demographicParam: int
+    description: str
+    user: str
+
+    class Config:
+        from_attributes = True
