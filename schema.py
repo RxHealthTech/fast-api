@@ -56,7 +56,6 @@ class Upload(BaseModel):
 
 
 class ReportSummary(BaseModel):
-    id: int
     name: str
     category: str
     record_owner_id: int
@@ -70,7 +69,6 @@ class ReportSummary(BaseModel):
 
 
 class ForNutritionReport(BaseModel):
-    id: int
     name: str
     machineParam: int
     demographicParam: int

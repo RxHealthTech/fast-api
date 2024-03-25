@@ -144,7 +144,7 @@ async def delete_upload(id: int):
 # Report Summary Section
 @app.get("/report_summary")
 async def get_report_summary():
-    reports = db.session.query(ReportSummaryModel).filter(ReportSummaryModel.deleted != 0).all()
+    reports = db.session.query(ReportSummaryModel).filter(ReportSummaryModel.deleted != 1).all()
     return reports
 
 
@@ -170,8 +170,14 @@ async def delete_report_summary(id: int):
 
 @app.get("/report/nutrition")
 async def generate_nutrition_report():
-    reports = db.session.query(ForNutritionReportModel).filter(ForNutritionReportModel.deleted != 0).all()
+    reports = db.session.query(ForNutritionReportModel).filter(ForNutritionReportModel.deleted != 1).all()
     return reports
+
+
+@app.get("/report/nutrition/{id}")
+async def get_nutrition_report_by_id(id: int):
+    report = db.session.query(ForNutritionReportModel).get(id)
+    return report
 
 
 @app.post('/report/nutrition')
