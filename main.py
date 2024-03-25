@@ -11,12 +11,14 @@ from schema import ReportFile as SchemaReportFile
 from schema import Comment as CommentSchema
 from schema import Category as CategorySchema
 from schema import Upload as UploadFileSchema
+from schema import ReportSummary as ReportSummarySchema
 from schema import ForNutritionReport as ForNutritionReportSchema
 # Model is what will be in the database (Or Database Shape)
 from models import ReportFile as ModelReportFile
 from models import Comments as CommentModel
 from models import Categories as CategoryModel
 from models import Uploads as UploadFileModel
+from models import ReportSummary as ReportSummaryModel
 from models import ForNutritionReport as ForNutritionReportModel
 
 # get is when you want to get data from the database (or list)
@@ -139,9 +141,36 @@ async def delete_upload(id: int):
     return {"message": "Upload Deleted"}
 
 
+# Report Summary Section
+@app.get("/report_summary")
+async def get_report_summary():
+    reports = db.session.query(ReportSummaryModel).filter(ReportSummaryModel.deleted != 0).all()
+    return reports
+
+
+@app.post('/report_summary')
+async def create_report_summary(report: ReportSummarySchema):
+    db_report = ReportSummaryModel(name=report.name, category=report.category, record_owner_id=report.record_owner_id,
+                                   document_key=report.document_key, document_html_path=report.document_html_path,
+                                   document_pdf_path=report.document_pdf_path, user=report.user)
+    db.session.add(db_report)
+    db.session.commit()
+    return db_report
+
+
+@app.delete('/report_summary/{id}')
+async def delete_report_summary(id: int):
+    report = db.session.query(ReportSummaryModel).get(id)
+    report.deleted = 1
+    db.session.commit()
+    return {"message": "Report Deleted"}
+
+
+# Nutrition Report Section
+
 @app.get("/report/nutrition")
 async def generate_nutrition_report():
-    reports = db.session.query(ForNutritionReportModel).all()
+    reports = db.session.query(ForNutritionReportModel).filter(ForNutritionReportModel.deleted != 0).all()
     return reports
 
 
@@ -153,3 +182,11 @@ async def generate_nutrition_report(report: ForNutritionReportSchema):
     db.session.add(db_report)
     db.session.commit()
     return db_report
+
+
+@app.delete('/report/nutrition/{id}')
+async def delete_nutrition_report(id: int):
+    report = db.session.query(ForNutritionReportModel).get(id)
+    report.deleted = 1
+    db.session.commit()
+    return {"message": "Report Deleted"}

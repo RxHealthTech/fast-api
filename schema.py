@@ -55,6 +55,20 @@ class Upload(BaseModel):
         from_attributes = True
 
 
+class ReportSummary(BaseModel):
+    id: int
+    name: str
+    category: str
+    record_owner_id: int
+    document_key: str
+    document_html_path: str
+    document_pdf_path: str
+    user: str
+
+    class Config:
+        from_attributes = True
+
+
 class ForNutritionReport(BaseModel):
     id: int
     name: str
